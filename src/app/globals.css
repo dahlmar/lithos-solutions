@@ -30,3 +30,43 @@ a {
   color: inherit;
   text-decoration: none;
 }
+@keyframes lithosDrift {
+  from {
+    transform: translate(0,0);
+  }
+  to {
+    transform: translate(-54px,-54px);
+  }
+}
+
+@keyframes lithosGlow {
+  0%,100% {
+    opacity:0.5;
+  }
+  50% {
+    opacity:0.95;
+  }
+}
+
+.animate-lithos-grid {
+  animation: lithosDrift 32s linear infinite;
+}
+
+.animate-lithos-glow {
+  animation: lithosGlow 9s ease-in-out infinite;
+}
+@keyframes lithosFade {
+  from {
+    opacity:0;
+    transform:translateY(14px);
+  }
+
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.animate-lithos-fade {
+  animation:lithosFade 0.9s ease both;
+}
