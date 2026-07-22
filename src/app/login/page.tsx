@@ -47,7 +47,8 @@ export default async function LoginPage({
         <div className="w-full max-w-[380px] animate-lithos-fade">
           <h1 className="text-[28px] font-medium tracking-[-0.015em]">Sign in</h1>
           <p className="mt-2 text-sm text-muted">
-            Enter the email and password from your project invitation.
+            Enter the email from your project invitation and we&apos;ll send you
+            a one-time sign-in code.
           </p>
 
           <LoginForm next={next} />
