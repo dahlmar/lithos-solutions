@@ -13,6 +13,8 @@ type ProjectRow = {
   type: "creative" | "infrastructure";
   status: "planning" | "on_track" | "at_risk" | "delivered";
   progress: number;
+  manager_id: string | null;
+  started_on: string | null;
   clients: { name: string } | null;
   profiles: { full_name: string } | null;
 };
@@ -30,7 +32,7 @@ const TYPE_LABELS: Record<ProjectRow["type"], Project["type"]> = {
 };
 
 const PROJECT_SELECT =
-  "id, name, client_id, type, status, progress, clients(name), profiles(full_name)";
+  "id, name, client_id, type, status, progress, manager_id, started_on, clients(name), profiles(full_name)";
 
 function toProject(row: ProjectRow): Project {
   return {
@@ -39,9 +41,11 @@ function toProject(row: ProjectRow): Project {
     clientId: row.client_id,
     clientName: row.clients?.name ?? "—",
     manager: row.profiles?.full_name || "—",
+    managerId: row.manager_id,
     type: TYPE_LABELS[row.type],
     progress: row.progress,
     status: STATUS_LABELS[row.status],
+    startedOn: row.started_on,
   };
 }
 

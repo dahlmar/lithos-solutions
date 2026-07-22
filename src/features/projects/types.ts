@@ -8,9 +8,11 @@ export type Project = {
   clientId: string;
   clientName: string;
   manager: string;
+  managerId: string | null;
   type: "Creative" | "Infrastructure";
   progress: number; // 0–100
   status: ProjectStatus;
+  startedOn: string | null; // ISO date
 };
 
 export const projectStatusTone: Record<ProjectStatus, Tone> = {

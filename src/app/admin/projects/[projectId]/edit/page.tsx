@@ -5,6 +5,7 @@ import ProgressBar from "@/components/ui/ProgressBar";
 import ProjectEditForm from "@/features/projects/components/ProjectEditForm";
 import { getProjectById } from "@/features/projects/data";
 import { projectStatusTone, projectStatusValue } from "@/features/projects/types";
+import { getTeamMembers } from "@/features/team/data";
 
 export default async function EditProjectPage({
   params,
@@ -12,13 +13,16 @@ export default async function EditProjectPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const project = await getProjectById(projectId);
+  const [project, team] = await Promise.all([
+    getProjectById(projectId),
+    getTeamMembers(),
+  ]);
   if (!project) notFound();
 
   return (
     <Panel className="max-w-[560px] p-7">
       <MonoLabel>
-        {project.type.toUpperCase()} · {project.clientName.toUpperCase()}
+        EDIT · {project.type.toUpperCase()} · {project.clientName.toUpperCase()}
       </MonoLabel>
       <h1 className="mt-3 text-xl font-medium tracking-[-0.015em]">
         {project.name}
@@ -30,8 +34,12 @@ export default async function EditProjectPage({
       <div className="mt-7 border-t border-white/6 pt-6">
         <ProjectEditForm
           projectId={project.id}
+          defaultName={project.name}
           defaultStatus={projectStatusValue[project.status]}
           defaultProgress={project.progress}
+          defaultManagerId={project.managerId}
+          defaultStartedOn={project.startedOn}
+          team={team}
         />
       </div>
     </Panel>

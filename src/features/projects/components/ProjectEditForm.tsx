@@ -8,27 +8,48 @@ import {
   ghostButton,
   labelClasses,
 } from "@/components/ui/fieldStyles";
-import { updateProjectStatus, type ProjectFormState } from "../actions";
+import { updateProject, type ProjectFormState } from "../actions";
+
+type Option = { id: string; name: string };
 
 type ProjectEditFormProps = {
   projectId: string;
+  defaultName: string;
   defaultStatus: "planning" | "on_track" | "at_risk" | "delivered";
   defaultProgress: number;
+  defaultManagerId: string | null;
+  defaultStartedOn: string | null; // ISO date
+  team: Option[];
 };
 
 export default function ProjectEditForm({
   projectId,
+  defaultName,
   defaultStatus,
   defaultProgress,
+  defaultManagerId,
+  defaultStartedOn,
+  team,
 }: ProjectEditFormProps) {
   const [state, formAction, pending] = useActionState<ProjectFormState, FormData>(
-    updateProjectStatus,
+    updateProject,
     {},
   );
 
   return (
     <form action={formAction} className="flex flex-col gap-[18px]">
       <input type="hidden" name="id" value={projectId} />
+
+      <label className="block">
+        <span className={labelClasses}>Project name</span>
+        <input
+          type="text"
+          name="name"
+          required
+          defaultValue={defaultName}
+          className={fieldClasses}
+        />
+      </label>
 
       <div className="grid grid-cols-2 gap-4">
         <label className="block">
@@ -49,6 +70,34 @@ export default function ProjectEditForm({
             min={0}
             max={100}
             defaultValue={defaultProgress}
+            className={fieldClasses}
+          />
+        </label>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <label className="block">
+          <span className={labelClasses}>Manager</span>
+          <select
+            name="manager_id"
+            defaultValue={defaultManagerId ?? ""}
+            className={fieldClasses}
+          >
+            <option value="">Unassigned</option>
+            {team.map((member) => (
+              <option key={member.id} value={member.id}>
+                {member.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="block">
+          <span className={labelClasses}>Start date</span>
+          <input
+            type="date"
+            name="started_on"
+            defaultValue={defaultStartedOn ?? ""}
             className={fieldClasses}
           />
         </label>

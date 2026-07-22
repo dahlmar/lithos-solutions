@@ -57,7 +57,10 @@ export default async function ProjectDetailPage({
           <h1 className="mt-3 text-2xl font-medium tracking-[-0.015em]">
             {project.name}
           </h1>
-          <div className="mt-2 text-[13px] text-muted">PM {project.manager}</div>
+          <div className="mt-2 text-[13px] text-muted">
+            PM {project.manager}
+            {project.startedOn ? ` · Started ${longDate(project.startedOn)}` : ""}
+          </div>
           <div className="mt-3 max-w-[240px]">
             <ProgressBar
               value={project.progress}
@@ -73,7 +76,7 @@ export default async function ProjectDetailPage({
             href={`/admin/projects/${project.id}/edit`}
             className={accentButton}
           >
-            Edit status
+            Edit project
           </Link>
         </div>
       </Panel>

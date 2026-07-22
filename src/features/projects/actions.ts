@@ -62,7 +62,7 @@ export async function createProject(
   redirect("/admin/projects");
 }
 
-export async function updateProjectStatus(
+export async function updateProject(
   _prevState: ProjectFormState,
   formData: FormData,
 ): Promise<ProjectFormState> {
@@ -70,12 +70,22 @@ export async function updateProjectStatus(
   await requireUser("admin");
 
   const id = String(formData.get("id") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
   const status = String(formData.get("status") ?? "");
+  const managerId = String(formData.get("manager_id") ?? "");
+  const startedOn = String(formData.get("started_on") ?? "");
   const progress = Number(formData.get("progress") ?? NaN);
 
   if (!UUID_RE.test(id)) return { error: "Invalid project." };
+  if (!name) return { error: "Project name is required." };
   if (!STATUSES.includes(status as (typeof STATUSES)[number])) {
     return { error: "Choose a valid status." };
+  }
+  if (managerId && !UUID_RE.test(managerId)) {
+    return { error: "Choose a valid manager." };
+  }
+  if (startedOn && Number.isNaN(new Date(startedOn).getTime())) {
+    return { error: "Start date doesn't look valid." };
   }
   if (!Number.isInteger(progress) || progress < 0 || progress > 100) {
     return { error: "Progress must be a whole number between 0 and 100." };
@@ -84,7 +94,13 @@ export async function updateProjectStatus(
   const supabase = await createSupabase();
   const { error } = await supabase
     .from("projects")
-    .update({ status, progress })
+    .update({
+      name,
+      status,
+      progress,
+      manager_id: managerId || null,
+      started_on: startedOn || null,
+    })
     .eq("id", id);
   if (error) return { error: `Could not update project: ${error.message}` };
 
