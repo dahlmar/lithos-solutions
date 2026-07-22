@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { fieldClasses } from "@/components/ui/fieldStyles";
 import { signIn, type SignInState } from "../actions";
@@ -35,6 +36,15 @@ export default function LoginForm({ next }: { next?: string }) {
           className={fieldClasses}
         />
       </label>
+
+      <div className="flex justify-end">
+        <Link
+          href="/forgot"
+          className="text-[13px] text-muted transition-colors hover:text-foreground"
+        >
+          Forgot password?
+        </Link>
+      </div>
 
       {state.error ? (
         <p className="text-[13px] text-danger" role="alert">
