@@ -19,3 +19,14 @@ export const projectStatusTone: Record<ProjectStatus, Tone> = {
   Planning: "info",
   Delivered: "muted",
 };
+
+/** Display label → database enum value (for form defaults). */
+export const projectStatusValue: Record<
+  ProjectStatus,
+  "planning" | "on_track" | "at_risk" | "delivered"
+> = {
+  Planning: "planning",
+  "On Track": "on_track",
+  "At Risk": "at_risk",
+  Delivered: "delivered",
+};

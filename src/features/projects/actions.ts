@@ -61,3 +61,34 @@ export async function createProject(
   revalidatePath(`/admin/clients/${clientId}`);
   redirect("/admin/projects");
 }
+
+export async function updateProjectStatus(
+  _prevState: ProjectFormState,
+  formData: FormData,
+): Promise<ProjectFormState> {
+  // Server actions are public endpoints — never rely on the page's check.
+  await requireUser("admin");
+
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "");
+  const progress = Number(formData.get("progress") ?? NaN);
+
+  if (!UUID_RE.test(id)) return { error: "Invalid project." };
+  if (!STATUSES.includes(status as (typeof STATUSES)[number])) {
+    return { error: "Choose a valid status." };
+  }
+  if (!Number.isInteger(progress) || progress < 0 || progress > 100) {
+    return { error: "Progress must be a whole number between 0 and 100." };
+  }
+
+  const supabase = await createSupabase();
+  const { error } = await supabase
+    .from("projects")
+    .update({ status, progress })
+    .eq("id", id);
+  if (error) return { error: `Could not update project: ${error.message}` };
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+  redirect("/admin/projects");
+}

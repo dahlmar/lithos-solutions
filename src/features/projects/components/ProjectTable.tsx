@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Panel from "@/components/ui/Panel";
 import ProgressBar from "@/components/ui/ProgressBar";
 import { toneText } from "@/components/ui/tones";
@@ -18,8 +19,9 @@ export default function ProjectTable({ projects }: { projects: Project[] }) {
       {projects.map((project) => {
         const tone = projectStatusTone[project.status];
         return (
-          <div
+          <Link
             key={project.id}
+            href={`/admin/projects/${project.id}/edit`}
             className={`${COLS} border-b border-white/5 py-[17px] transition-colors hover:bg-white/3`}
           >
             <div>
@@ -30,7 +32,7 @@ export default function ProjectTable({ projects }: { projects: Project[] }) {
             <span className="text-[12.5px] text-muted">{project.manager}</span>
             <ProgressBar value={project.progress} tone={tone} />
             <span className={`text-xs ${toneText[tone]}`}>{project.status}</span>
-          </div>
+          </Link>
         );
       })}
     </Panel>
