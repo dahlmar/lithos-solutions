@@ -1,10 +1,12 @@
-export default function Creative() {
-  return (
-    <main>
-      <h1>Creative Solutions</h1>
-      <p>
-        Strategy, design, innovation, and creative support for growing businesses.
-      </p>
-    </main>
-  );
+import type { Metadata } from "next";
+import MarketingPage from "@/components/marketing/MarketingPage";
+import { creative } from "@/features/marketing/content";
+
+export const metadata: Metadata = {
+  title: "Creative",
+  description: creative.heroSub,
+};
+
+export default function CreativePage() {
+  return <MarketingPage content={creative} />;
 }

@@ -1,11 +1,12 @@
-export default function Infrastructure() {
-  return (
-    <main>
-      <h1>Infrastructure Solutions</h1>
-      <p>
-        Operational systems, technology, process improvement, and ongoing support
-        for growing businesses.
-      </p>
-    </main>
-  );
+import type { Metadata } from "next";
+import MarketingPage from "@/components/marketing/MarketingPage";
+import { infrastructure } from "@/features/marketing/content";
+
+export const metadata: Metadata = {
+  title: "Infrastructure",
+  description: infrastructure.heroSub,
+};
+
+export default function InfrastructurePage() {
+  return <MarketingPage content={infrastructure} />;
 }
