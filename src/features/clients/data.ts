@@ -43,6 +43,22 @@ export async function getClients(): Promise<ClientWithCounts[]> {
   }));
 }
 
+/**
+ * The signed-in portal user's client workspace. Relies on RLS: a client-role
+ * user can only ever select their own client row. Returns null when the
+ * user's profile isn't linked to a client yet.
+ */
+export async function getMyClient(): Promise<Client | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("clients")
+    .select("id, name, contact_email, status")
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(`Failed to load client workspace: ${error.message}`);
+  return data ? toClient(data as ClientRow) : null;
+}
+
 export async function getClientById(id: string): Promise<Client | undefined> {
   // Route params are user input — reject non-UUIDs before they hit Postgres.
   if (!UUID_RE.test(id)) return undefined;

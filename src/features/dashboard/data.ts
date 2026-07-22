@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
+import { shortDate } from "@/lib/format";
 import type { Tone } from "@/components/ui/tones";
 
 export type Stat = { label: string; value: string; delta: string; tone: Tone };
@@ -27,13 +28,6 @@ type DeliverableRow = {
 };
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-
-function shortDate(value: string): string {
-  return new Date(value).toLocaleDateString("en-US", {
-    month: "short",
-    day: "2-digit",
-  });
-}
 
 export async function getDashboard() {
   const supabase = await createClient();

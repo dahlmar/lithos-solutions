@@ -4,31 +4,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/features/auth/actions";
 
-const NAV_ITEMS = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/projects", label: "Projects" },
-  { href: "/admin/clients", label: "Clients" },
-];
-
-function isActive(pathname: string, href: string) {
-  return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
-}
-
-type AdminSidebarProps = {
-  userName: string;
-  userRole: string;
+export type SidebarNavItem = {
+  href: string;
+  label: string;
+  /** Match the pathname exactly (for the section's index route). */
+  exact?: boolean;
 };
 
-function initials(name: string) {
-  return name
-    .split(/[\s@.]+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]!.toUpperCase())
-    .join("");
-}
+type SidebarProps = {
+  sectionLabel?: string;
+  items: SidebarNavItem[];
+  userName: string;
+  userSub: string;
+  userInitials: string;
+};
 
-export default function AdminSidebar({ userName, userRole }: AdminSidebarProps) {
+export default function Sidebar({
+  sectionLabel,
+  items,
+  userName,
+  userSub,
+  userInitials,
+}: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -42,14 +39,18 @@ export default function AdminSidebar({ userName, userRole }: AdminSidebarProps) 
         </span>
       </Link>
       <div className="px-2.5 pb-4">
-        <span className="font-mono text-[9px] tracking-[0.24em] text-accent">
-          OPERATIONS
-        </span>
+        {sectionLabel ? (
+          <span className="font-mono text-[9px] tracking-[0.24em] text-accent">
+            {sectionLabel}
+          </span>
+        ) : null}
       </div>
 
       <nav className="flex flex-col gap-[3px]">
-        {NAV_ITEMS.map((item) => {
-          const active = isActive(pathname, item.href);
+        {items.map((item) => {
+          const active = item.exact
+            ? pathname === item.href
+            : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
@@ -69,11 +70,11 @@ export default function AdminSidebar({ userName, userRole }: AdminSidebarProps) 
 
       <div className="mt-auto flex items-center gap-3 border-t border-white/6 p-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-accent/18 text-xs font-semibold text-accent">
-          {initials(userName)}
+          {userInitials}
         </span>
         <div className="min-w-0 flex-1 leading-tight">
           <div className="truncate text-[12.5px] font-medium">{userName}</div>
-          <div className="text-[10.5px] capitalize text-muted">{userRole}</div>
+          <div className="text-[10.5px] text-muted">{userSub}</div>
         </div>
         <form action={signOut}>
           <button

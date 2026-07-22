@@ -1,11 +1,24 @@
 import type { Metadata } from "next";
-import AdminSidebar from "@/components/layout/AdminSidebar";
-import AdminTopbar from "@/components/layout/AdminTopbar";
+import Sidebar from "@/components/layout/Sidebar";
+import Topbar from "@/components/layout/Topbar";
 import { requireUser } from "@/features/auth/session";
+import { initials } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Operations",
 };
+
+const NAV_ITEMS = [
+  { href: "/admin", label: "Dashboard", exact: true },
+  { href: "/admin/projects", label: "Projects" },
+  { href: "/admin/clients", label: "Clients" },
+];
+
+const TITLES: Array<[string, string]> = [
+  ["/admin/clients", "Clients"],
+  ["/admin/projects", "Projects"],
+  ["/admin", "Dashboard"],
+];
 
 export default async function AdminLayout({
   children,
@@ -17,9 +30,15 @@ export default async function AdminLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface text-foreground">
-      <AdminSidebar userName={user.name} userRole={user.role} />
+      <Sidebar
+        sectionLabel="OPERATIONS"
+        items={NAV_ITEMS}
+        userName={user.name}
+        userSub="Admin"
+        userInitials={initials(user.name)}
+      />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <AdminTopbar />
+        <Topbar titles={TITLES} userInitials={initials(user.name)} />
         <div className="flex-1 overflow-y-auto px-8 pb-16 pt-[34px]">
           <div className="mx-auto max-w-[1080px] animate-lithos-fade">{children}</div>
         </div>
