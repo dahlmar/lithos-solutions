@@ -1,0 +1,8 @@
+# Legacy design prototype — reference only, not part of the deployed app
+# (patterns anchored with "/" so they only match at the repo root —
+# an unanchored "supabase" would also exclude src/lib/supabase!)
+/index.html
+/support.js
+
+# Database migrations are applied via Supabase, not bundled with the app
+/supabase

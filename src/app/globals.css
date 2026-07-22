@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Lithos design tokens — mirror the prototype palette (index.html) */
+  --color-surface: #111111;
+  --color-panel: #0f0f0f;
+  --color-foreground: #f5f5f3;
+  --color-soft: #cfcfca;
+  --color-muted: #8a8a8a;
+  --color-accent: #1fb07c;
+  --color-warn: #c9a227;
+  --color-danger: #e0703a;
+  --color-info: #7aa2ff;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #111111;
+  --foreground: #F5F5F3;
+  --muted: #8A8A8A;
+  --accent: #1FB07C;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #111111;
+}
+
+body {
+  background: #111111;
+  color: #F5F5F3;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(31,176,124,0.3);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+@keyframes lithosDrift {
+  from {
+    transform: translate(0,0);
+  }
+  to {
+    transform: translate(-54px,-54px);
+  }
+}
+
+@keyframes lithosGlow {
+  0%,100% {
+    opacity:0.5;
+  }
+  50% {
+    opacity:0.95;
+  }
+}
+
+.animate-lithos-grid {
+  animation: lithosDrift 32s linear infinite;
+}
+
+.animate-lithos-glow {
+  animation: lithosGlow 9s ease-in-out infinite;
+}
+@keyframes lithosFade {
+  from {
+    opacity:0;
+    transform:translateY(14px);
+  }
+
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.animate-lithos-fade {
+  animation:lithosFade 0.9s ease both;
+}
