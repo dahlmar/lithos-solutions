@@ -1,0 +1,6 @@
+# Legacy design prototype — reference only, not part of the deployed app
+index.html
+support.js
+
+# Database migrations are applied via Supabase, not bundled with the app
+supabase
