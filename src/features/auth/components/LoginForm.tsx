@@ -1,10 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
+import { fieldClasses } from "@/components/ui/fieldStyles";
 import { signIn, type SignInState } from "../actions";
-
-const INPUT_CLASSES =
-  "mt-2 w-full rounded-xl border border-white/10 bg-white/3 px-[15px] py-[13px] text-sm text-foreground outline-none transition-colors focus:border-accent";
 
 export default function LoginForm({ next }: { next?: string }) {
   const [state, formAction, pending] = useActionState<SignInState, FormData>(
@@ -23,7 +21,7 @@ export default function LoginForm({ next }: { next?: string }) {
           name="email"
           autoComplete="email"
           required
-          className={INPUT_CLASSES}
+          className={fieldClasses}
         />
       </label>
 
@@ -34,7 +32,7 @@ export default function LoginForm({ next }: { next?: string }) {
           name="password"
           autoComplete="current-password"
           required
-          className={INPUT_CLASSES}
+          className={fieldClasses}
         />
       </label>
 

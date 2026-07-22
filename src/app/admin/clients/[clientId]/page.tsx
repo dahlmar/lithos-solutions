@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { accentButton } from "@/components/ui/fieldStyles";
 import MonoLabel from "@/components/ui/MonoLabel";
 import Panel from "@/components/ui/Panel";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -38,9 +39,9 @@ export default async function ClientDetailPage({
         </div>
         <div className="flex items-center gap-2.5">
           <StatusBadge tone={clientStatusTone[client.status]}>{client.status}</StatusBadge>
-          <button className="cursor-pointer rounded-[10px] bg-accent px-4 py-[9px] text-[12.5px] font-medium text-[#06120d]">
+          <Link href={`/admin/projects/new?client=${client.id}`} className={accentButton}>
             + New project
-          </button>
+          </Link>
         </div>
       </Panel>
 

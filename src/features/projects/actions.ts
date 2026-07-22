@@ -1,0 +1,63 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { requireUser } from "@/features/auth/session";
+import { createClient as createSupabase } from "@/lib/supabase/server";
+
+export type ProjectFormState = { error?: string };
+
+const TYPES = ["creative", "infrastructure"] as const;
+const STATUSES = ["planning", "on_track", "at_risk", "delivered"] as const;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function createProject(
+  _prevState: ProjectFormState,
+  formData: FormData,
+): Promise<ProjectFormState> {
+  // Server actions are public endpoints — never rely on the page's check.
+  await requireUser("admin");
+
+  const name = String(formData.get("name") ?? "").trim();
+  const clientId = String(formData.get("client_id") ?? "");
+  const type = String(formData.get("type") ?? "");
+  const status = String(formData.get("status") ?? "");
+  const managerId = String(formData.get("manager_id") ?? "");
+  const startedOn = String(formData.get("started_on") ?? "");
+  const progress = Number(formData.get("progress") ?? 0);
+
+  if (!name) return { error: "Project name is required." };
+  if (!UUID_RE.test(clientId)) return { error: "Choose a client." };
+  if (!TYPES.includes(type as (typeof TYPES)[number])) {
+    return { error: "Choose a project type." };
+  }
+  if (!STATUSES.includes(status as (typeof STATUSES)[number])) {
+    return { error: "Choose a valid status." };
+  }
+  if (managerId && !UUID_RE.test(managerId)) {
+    return { error: "Choose a valid manager." };
+  }
+  if (!Number.isInteger(progress) || progress < 0 || progress > 100) {
+    return { error: "Progress must be a whole number between 0 and 100." };
+  }
+  if (startedOn && Number.isNaN(new Date(startedOn).getTime())) {
+    return { error: "Start date doesn't look valid." };
+  }
+
+  const supabase = await createSupabase();
+  const { error } = await supabase.from("projects").insert({
+    name,
+    client_id: clientId,
+    type,
+    status,
+    progress,
+    manager_id: managerId || null,
+    started_on: startedOn || null,
+  });
+  if (error) return { error: `Could not create project: ${error.message}` };
+
+  revalidatePath("/admin/projects");
+  revalidatePath(`/admin/clients/${clientId}`);
+  redirect("/admin/projects");
+}
