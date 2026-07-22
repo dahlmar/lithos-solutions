@@ -19,6 +19,7 @@ type ProjectEditFormProps = {
   defaultProgress: number;
   defaultManagerId: string | null;
   defaultStartedOn: string | null; // ISO date
+  defaultBudget: number | null; // whole currency units
   team: Option[];
 };
 
@@ -29,6 +30,7 @@ export default function ProjectEditForm({
   defaultProgress,
   defaultManagerId,
   defaultStartedOn,
+  defaultBudget,
   team,
 }: ProjectEditFormProps) {
   const [state, formAction, pending] = useActionState<ProjectFormState, FormData>(
@@ -72,8 +74,25 @@ export default function ProjectEditForm({
             defaultValue={defaultProgress}
             className={fieldClasses}
           />
+          <span className="mt-1.5 block text-[11px] text-muted">
+            Auto-derived from deliverable stages once the project has
+            deliverables.
+          </span>
         </label>
       </div>
+
+      <label className="block">
+        <span className={labelClasses}>Budget (optional, in billing currency)</span>
+        <input
+          type="number"
+          name="budget"
+          min={0}
+          step="0.01"
+          defaultValue={defaultBudget ?? ""}
+          placeholder="250000"
+          className={fieldClasses}
+        />
+      </label>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="block">

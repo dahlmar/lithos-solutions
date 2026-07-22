@@ -1,4 +1,5 @@
 import MonoLabel from "@/components/ui/MonoLabel";
+import ClientCommentForm from "@/features/notes/components/ClientCommentForm";
 import Panel from "@/components/ui/Panel";
 import ProgressRing from "@/components/ui/ProgressRing";
 import { getDeliverables } from "@/features/deliverables/data";
@@ -111,6 +112,7 @@ export default async function PortalDashboard() {
               <p className="text-sm text-muted">No updates yet.</p>
             ) : null}
           </div>
+          <ClientCommentForm projectId={current.id} />
         </Panel>
       </div>
     </>

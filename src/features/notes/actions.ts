@@ -39,3 +39,22 @@ export async function createNote(
   revalidatePath(`/admin/projects/${projectId}`);
   return {};
 }
+
+export async function deleteNote(
+  _prevState: NoteFormState,
+  formData: FormData,
+): Promise<NoteFormState> {
+  // Server actions are public endpoints — never rely on the page's check.
+  await requireUser("admin");
+
+  const id = String(formData.get("id") ?? "");
+  const projectId = String(formData.get("project_id") ?? "");
+  if (!UUID_RE.test(id)) return { error: "Invalid note." };
+
+  const supabase = await createSupabase();
+  const { error } = await supabase.from("notes").delete().eq("id", id);
+  if (error) return { error: `Could not delete note: ${error.message}` };
+
+  if (UUID_RE.test(projectId)) revalidatePath(`/admin/projects/${projectId}`);
+  return {};
+}

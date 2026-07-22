@@ -13,6 +13,7 @@ export type Project = {
   progress: number; // 0–100
   status: ProjectStatus;
   startedOn: string | null; // ISO date
+  budgetCents: number | null;
 };
 
 export const projectStatusTone: Record<ProjectStatus, Tone> = {

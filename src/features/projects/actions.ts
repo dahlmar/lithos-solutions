@@ -26,6 +26,7 @@ export async function createProject(
   const managerId = String(formData.get("manager_id") ?? "");
   const startedOn = String(formData.get("started_on") ?? "");
   const progress = Number(formData.get("progress") ?? 0);
+  const budgetRaw = String(formData.get("budget") ?? "").replace(",", ".").trim();
 
   if (!name) return { error: "Project name is required." };
   if (!UUID_RE.test(clientId)) return { error: "Choose a client." };
@@ -44,6 +45,10 @@ export async function createProject(
   if (startedOn && Number.isNaN(new Date(startedOn).getTime())) {
     return { error: "Start date doesn't look valid." };
   }
+  const budget = budgetRaw ? Number(budgetRaw) : null;
+  if (budget !== null && (!Number.isFinite(budget) || budget < 0)) {
+    return { error: "Budget must be a non-negative number." };
+  }
 
   const supabase = await createSupabase();
   const { error } = await supabase.from("projects").insert({
@@ -54,6 +59,7 @@ export async function createProject(
     progress,
     manager_id: managerId || null,
     started_on: startedOn || null,
+    budget_cents: budget === null ? null : Math.round(budget * 100),
   });
   if (error) return { error: `Could not create project: ${error.message}` };
 
@@ -75,6 +81,7 @@ export async function updateProject(
   const managerId = String(formData.get("manager_id") ?? "");
   const startedOn = String(formData.get("started_on") ?? "");
   const progress = Number(formData.get("progress") ?? NaN);
+  const budgetRaw = String(formData.get("budget") ?? "").replace(",", ".").trim();
 
   if (!UUID_RE.test(id)) return { error: "Invalid project." };
   if (!name) return { error: "Project name is required." };
@@ -90,6 +97,10 @@ export async function updateProject(
   if (!Number.isInteger(progress) || progress < 0 || progress > 100) {
     return { error: "Progress must be a whole number between 0 and 100." };
   }
+  const budget = budgetRaw ? Number(budgetRaw) : null;
+  if (budget !== null && (!Number.isFinite(budget) || budget < 0)) {
+    return { error: "Budget must be a non-negative number." };
+  }
 
   const supabase = await createSupabase();
   const { error } = await supabase
@@ -100,6 +111,7 @@ export async function updateProject(
       progress,
       manager_id: managerId || null,
       started_on: startedOn || null,
+      budget_cents: budget === null ? null : Math.round(budget * 100),
     })
     .eq("id", id);
   if (error) return { error: `Could not update project: ${error.message}` };
@@ -107,4 +119,23 @@ export async function updateProject(
   revalidatePath("/admin");
   revalidatePath("/admin/projects");
   redirect(`/admin/projects/${id}`);
+}
+
+export async function deleteProject(
+  _prevState: ProjectFormState,
+  formData: FormData,
+): Promise<ProjectFormState> {
+  // Server actions are public endpoints — never rely on the page's check.
+  await requireUser("admin");
+
+  const id = String(formData.get("id") ?? "");
+  if (!UUID_RE.test(id)) return { error: "Invalid project." };
+
+  const supabase = await createSupabase();
+  const { error } = await supabase.from("projects").delete().eq("id", id);
+  if (error) return { error: `Could not delete project: ${error.message}` };
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+  redirect("/admin/projects");
 }

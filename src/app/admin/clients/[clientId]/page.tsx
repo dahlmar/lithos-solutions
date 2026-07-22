@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { accentButton } from "@/components/ui/fieldStyles";
+import DeleteForm from "@/components/ui/DeleteForm";
+import { accentButton, ghostButton } from "@/components/ui/fieldStyles";
 import MonoLabel from "@/components/ui/MonoLabel";
 import Panel from "@/components/ui/Panel";
 import StatusBadge from "@/components/ui/StatusBadge";
+import { deleteClient } from "@/features/clients/actions";
 import { getClientById } from "@/features/clients/data";
 import { clientStatusTone } from "@/features/clients/types";
 import ProjectTable from "@/features/projects/components/ProjectTable";
@@ -37,11 +39,20 @@ export default async function ClientDetailPage({
             {active.length === 1 ? "project" : "projects"}
           </div>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <StatusBadge tone={clientStatusTone[client.status]}>{client.status}</StatusBadge>
+          <Link href={`/admin/clients/${client.id}/edit`} className={ghostButton}>
+            Edit
+          </Link>
           <Link href={`/admin/projects/new?client=${client.id}`} className={accentButton}>
             + New project
           </Link>
+          <DeleteForm
+            action={deleteClient}
+            id={client.id}
+            label="Delete"
+            confirmMessage={`Delete ${client.name}? This only works when the client has no projects.`}
+          />
         </div>
       </Panel>
 
