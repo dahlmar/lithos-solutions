@@ -21,7 +21,7 @@ export default function ProjectTable({ projects }: { projects: Project[] }) {
         return (
           <Link
             key={project.id}
-            href={`/admin/projects/${project.id}/edit`}
+            href={`/admin/projects/${project.id}`}
             className={`${COLS} border-b border-white/5 py-[17px] transition-colors hover:bg-white/3`}
           >
             <div>

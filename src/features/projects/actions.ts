@@ -90,5 +90,5 @@ export async function updateProjectStatus(
 
   revalidatePath("/admin");
   revalidatePath("/admin/projects");
-  redirect("/admin/projects");
+  redirect(`/admin/projects/${id}`);
 }

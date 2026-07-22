@@ -21,16 +21,11 @@ const STATUS_LABELS: Record<DeliverableRow["status"], DeliverableStatus> = {
   delivered: "Delivered",
 };
 
-/** RLS-scoped: clients get only their own projects' deliverables. */
-export async function getDeliverables(): Promise<Deliverable[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("deliverables")
-    .select("id, name, description, status, version, due_on, projects(name)")
-    .order("due_on", { ascending: true, nullsFirst: false });
-  if (error) throw new Error(`Failed to load deliverables: ${error.message}`);
+const DELIVERABLE_SELECT =
+  "id, name, description, status, version, due_on, projects(name)";
 
-  return (data as unknown as DeliverableRow[]).map((row) => ({
+function toDeliverable(row: DeliverableRow): Deliverable {
+  return {
     id: row.id,
     name: row.name,
     description: row.description,
@@ -38,5 +33,29 @@ export async function getDeliverables(): Promise<Deliverable[]> {
     status: STATUS_LABELS[row.status],
     version: row.version,
     dueOn: row.due_on,
-  }));
+  };
+}
+
+/** RLS-scoped: clients get only their own projects' deliverables. */
+export async function getDeliverables(): Promise<Deliverable[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("deliverables")
+    .select(DELIVERABLE_SELECT)
+    .order("due_on", { ascending: true, nullsFirst: false });
+  if (error) throw new Error(`Failed to load deliverables: ${error.message}`);
+  return (data as unknown as DeliverableRow[]).map(toDeliverable);
+}
+
+export async function getDeliverablesForProject(
+  projectId: string,
+): Promise<Deliverable[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("deliverables")
+    .select(DELIVERABLE_SELECT)
+    .eq("project_id", projectId)
+    .order("due_on", { ascending: true, nullsFirst: false });
+  if (error) throw new Error(`Failed to load deliverables: ${error.message}`);
+  return (data as unknown as DeliverableRow[]).map(toDeliverable);
 }

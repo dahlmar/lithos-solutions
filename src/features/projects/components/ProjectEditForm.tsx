@@ -64,7 +64,7 @@ export default function ProjectEditForm({
         <button type="submit" disabled={pending} className={accentButton}>
           {pending ? "Saving…" : "Save changes"}
         </button>
-        <Link href="/admin/projects" className={ghostButton}>
+        <Link href={`/admin/projects/${projectId}`} className={ghostButton}>
           Cancel
         </Link>
       </div>
