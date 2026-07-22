@@ -1,18 +1,25 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import DeleteForm from "@/components/ui/DeleteForm";
 import { accentButton } from "@/components/ui/fieldStyles";
 import MonoLabel from "@/components/ui/MonoLabel";
 import Panel from "@/components/ui/Panel";
 import ProgressBar from "@/components/ui/ProgressBar";
 import StatusBadge from "@/components/ui/StatusBadge";
 import DeliverableForm from "@/features/deliverables/components/DeliverableForm";
-import { getDeliverablesForProject } from "@/features/deliverables/data";
-import { deliverableStatusTone } from "@/features/deliverables/types";
+import DeliverableItem from "@/features/deliverables/components/DeliverableItem";
+import {
+  getDeliverablesForProject,
+  getFilesForDeliverables,
+} from "@/features/deliverables/data";
+import { getInvoicedTotalForProject } from "@/features/invoices/data";
 import NoteForm from "@/features/notes/components/NoteForm";
+import NoteDeleteButton from "@/features/notes/components/NoteDeleteButton";
 import { getNotesForProject } from "@/features/notes/data";
+import { deleteProject } from "@/features/projects/actions";
 import { getProjectById } from "@/features/projects/data";
 import { projectStatusTone } from "@/features/projects/types";
-import { longDate, shortDate } from "@/lib/format";
+import { formatMoney, longDate, shortDate } from "@/lib/format";
 
 const NOTE_STYLES = {
   internal: {
@@ -36,10 +43,14 @@ export default async function ProjectDetailPage({
   const project = await getProjectById(projectId);
   if (!project) notFound();
 
-  const [deliverables, notes] = await Promise.all([
+  const [deliverables, notes, invoiced] = await Promise.all([
     getDeliverablesForProject(project.id),
     getNotesForProject(project.id),
+    getInvoicedTotalForProject(project.id),
   ]);
+  const filesByDeliverable = await getFilesForDeliverables(
+    deliverables.map((d) => d.id),
+  );
 
   return (
     <>
@@ -52,7 +63,13 @@ export default async function ProjectDetailPage({
             >
               PROJECTS
             </Link>{" "}
-            · {project.type.toUpperCase()} · {project.clientName.toUpperCase()}
+            · {project.type.toUpperCase()} ·{" "}
+            <Link
+              href={`/admin/clients/${project.clientId}`}
+              className="transition-colors hover:text-foreground"
+            >
+              {project.clientName.toUpperCase()}
+            </Link>
           </MonoLabel>
           <h1 className="mt-3 text-2xl font-medium tracking-[-0.015em]">
             {project.name}
@@ -67,8 +84,18 @@ export default async function ProjectDetailPage({
               tone={projectStatusTone[project.status]}
             />
           </div>
+          {project.budgetCents !== null && invoiced.currency ? (
+            <div className="mt-2 text-[12.5px] text-muted">
+              Invoiced {formatMoney(invoiced.totalCents, invoiced.currency)} of{" "}
+              {formatMoney(project.budgetCents, invoiced.currency)} budget
+            </div>
+          ) : project.budgetCents !== null ? (
+            <div className="mt-2 text-[12.5px] text-muted">
+              Budget {formatMoney(project.budgetCents, "SEK")} · nothing invoiced yet
+            </div>
+          ) : null}
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <StatusBadge tone={projectStatusTone[project.status]}>
             {project.status}
           </StatusBadge>
@@ -78,6 +105,12 @@ export default async function ProjectDetailPage({
           >
             Edit project
           </Link>
+          <DeleteForm
+            action={deleteProject}
+            id={project.id}
+            label="Delete"
+            confirmMessage={`Delete ${project.name}? All its deliverables, invoices, and notes will be deleted too. This cannot be undone.`}
+          />
         </div>
       </Panel>
 
@@ -86,21 +119,12 @@ export default async function ProjectDetailPage({
           <div className="mb-4 text-sm font-medium">Deliverables</div>
           <div className="flex flex-col">
             {deliverables.map((d) => (
-              <div
+              <DeliverableItem
                 key={d.id}
-                className="flex items-center justify-between gap-3 border-b border-white/5 py-[11px]"
-              >
-                <div className="text-[13px]">
-                  {d.name}
-                  <span className="text-muted">
-                    {d.dueOn ? ` · ${longDate(d.dueOn)}` : ""}
-                    {d.version ? ` · ${d.version}` : ""}
-                  </span>
-                </div>
-                <StatusBadge tone={deliverableStatusTone[d.status]}>
-                  {d.status}
-                </StatusBadge>
-              </div>
+                deliverable={d}
+                files={filesByDeliverable.get(d.id) ?? []}
+                clientId={project.clientId}
+              />
             ))}
             {deliverables.length === 0 ? (
               <p className="pb-2 text-[13px] text-muted">No deliverables yet.</p>
@@ -122,10 +146,13 @@ export default async function ProjectDetailPage({
                   key={note.id}
                   className={`rounded-[10px] border p-3 ${style.card}`}
                 >
-                  <div
-                    className={`font-mono text-[9px] tracking-[0.2em] ${style.label}`}
-                  >
-                    {style.text}
+                  <div className="flex items-start justify-between gap-2">
+                    <div
+                      className={`font-mono text-[9px] tracking-[0.2em] ${style.label}`}
+                    >
+                      {style.text}
+                    </div>
+                    <NoteDeleteButton noteId={note.id} projectId={project.id} />
                   </div>
                   <div className="mt-1.5 text-[12.5px] leading-relaxed text-soft">
                     {note.body}

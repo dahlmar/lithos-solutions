@@ -15,6 +15,7 @@ type ProjectRow = {
   progress: number;
   manager_id: string | null;
   started_on: string | null;
+  budget_cents: number | null;
   clients: { name: string } | null;
   profiles: { full_name: string } | null;
 };
@@ -32,7 +33,7 @@ const TYPE_LABELS: Record<ProjectRow["type"], Project["type"]> = {
 };
 
 const PROJECT_SELECT =
-  "id, name, client_id, type, status, progress, manager_id, started_on, clients(name), profiles(full_name)";
+  "id, name, client_id, type, status, progress, manager_id, started_on, budget_cents, clients(name), profiles(full_name)";
 
 function toProject(row: ProjectRow): Project {
   return {
@@ -46,15 +47,27 @@ function toProject(row: ProjectRow): Project {
     progress: row.progress,
     status: STATUS_LABELS[row.status],
     startedOn: row.started_on,
+    budgetCents: row.budget_cents,
   };
 }
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(filter?: {
+  q?: string;
+  status?: string;
+}): Promise<Project[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("projects")
     .select(PROJECT_SELECT)
     .order("created_at", { ascending: false });
+  if (filter?.q) query = query.ilike("name", `%${filter.q}%`);
+  if (
+    filter?.status &&
+    ["planning", "on_track", "at_risk", "delivered"].includes(filter.status)
+  ) {
+    query = query.eq("status", filter.status);
+  }
+  const { data, error } = await query;
   if (error) throw new Error(`Failed to load projects: ${error.message}`);
   return (data as unknown as ProjectRow[]).map(toProject);
 }

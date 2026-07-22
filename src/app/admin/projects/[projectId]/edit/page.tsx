@@ -39,6 +39,7 @@ export default async function EditProjectPage({
           defaultProgress={project.progress}
           defaultManagerId={project.managerId}
           defaultStartedOn={project.startedOn}
+          defaultBudget={project.budgetCents === null ? null : project.budgetCents / 100}
           team={team}
         />
       </div>

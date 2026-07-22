@@ -1,16 +1,21 @@
+import Link from "next/link";
 import MonoLabel from "@/components/ui/MonoLabel";
 import Panel from "@/components/ui/Panel";
 import StatCard from "@/components/ui/StatCard";
+import { toneText } from "@/components/ui/tones";
 import { getDashboard } from "@/features/dashboard/data";
+import { shortDate } from "@/lib/format";
 
 export default async function AdminDashboard() {
-  const { stats, recent, deadlines } = await getDashboard();
+  const { stats, recent, deadlines, aging, activity } = await getDashboard();
 
   return (
     <>
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <StatCard key={stat.label} {...stat} />
+        {stats.map(({ href, ...stat }) => (
+          <Link key={stat.label} href={href} className="transition-opacity hover:opacity-80">
+            <StatCard {...stat} />
+          </Link>
         ))}
       </div>
 
@@ -61,6 +66,46 @@ export default async function AdminDashboard() {
             ))}
             {deadlines.length === 0 ? (
               <p className="text-[13px] text-muted">Nothing due.</p>
+            ) : null}
+          </div>
+        </Panel>
+      </div>
+
+      <div className="mt-[18px] grid grid-cols-1 gap-[18px] md:grid-cols-2">
+        <Panel className="p-6">
+          <MonoLabel className="mb-4">OUTSTANDING INVOICES</MonoLabel>
+          <div className="flex flex-col gap-3">
+            {aging.map((bucket) => (
+              <div key={bucket.label} className="flex items-baseline justify-between gap-3">
+                <span className={`text-[13px] ${toneText[bucket.tone]}`}>
+                  {bucket.label}
+                </span>
+                <span className="text-right text-[13px] font-medium">
+                  {bucket.amounts.join(" + ")}
+                </span>
+              </div>
+            ))}
+            {aging.length === 0 ? (
+              <p className="text-[13px] text-muted">Nothing outstanding.</p>
+            ) : null}
+          </div>
+        </Panel>
+
+        <Panel className="p-6">
+          <MonoLabel className="mb-4">RECENT ACTIVITY</MonoLabel>
+          <div className="flex flex-col gap-[11px]">
+            {activity.map((event) => (
+              <div key={event.id} className="flex items-baseline gap-2.5 text-[12.5px]">
+                <span className="shrink-0 text-muted">{shortDate(event.createdAt)}</span>
+                <span className="min-w-0 flex-1 truncate">
+                  <span className="text-soft">{event.actor}</span>{" "}
+                  <span className="text-muted">{event.action}</span>{" "}
+                  {event.summary}
+                </span>
+              </div>
+            ))}
+            {activity.length === 0 ? (
+              <p className="text-[13px] text-muted">No activity recorded yet.</p>
             ) : null}
           </div>
         </Panel>

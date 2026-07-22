@@ -24,16 +24,26 @@ function toClient(row: ClientRow): Client {
     id: row.id,
     name: row.name,
     contact: row.contact_email ?? "—",
+    contactEmail: row.contact_email,
     status: STATUS_LABELS[row.status],
+    statusValue: row.status,
   };
 }
 
-export async function getClients(): Promise<ClientWithCounts[]> {
+export async function getClients(filter?: {
+  q?: string;
+  status?: string;
+}): Promise<ClientWithCounts[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("clients")
     .select("id, name, contact_email, status, projects(status)")
     .order("name");
+  if (filter?.q) query = query.ilike("name", `%${filter.q}%`);
+  if (filter?.status && ["active", "onboarding", "paused"].includes(filter.status)) {
+    query = query.eq("status", filter.status);
+  }
+  const { data, error } = await query;
   if (error) throw new Error(`Failed to load clients: ${error.message}`);
 
   type Row = ClientRow & { projects: { status: string }[] };

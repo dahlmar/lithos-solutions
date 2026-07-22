@@ -105,6 +105,18 @@ export default function ProjectForm({
         />
       </label>
 
+      <label className="block">
+        <span className={labelClasses}>Budget (optional, in billing currency)</span>
+        <input
+          type="number"
+          name="budget"
+          min={0}
+          step="0.01"
+          placeholder="250000"
+          className={fieldClasses}
+        />
+      </label>
+
       {state.error ? (
         <p className="text-[13px] text-danger" role="alert">
           {state.error}
