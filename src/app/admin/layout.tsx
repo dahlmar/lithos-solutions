@@ -12,11 +12,13 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", exact: true },
   { href: "/admin/projects", label: "Projects" },
   { href: "/admin/clients", label: "Clients" },
+  { href: "/admin/invoices", label: "Invoices" },
 ];
 
 const TITLES: Array<[string, string]> = [
   ["/admin/clients", "Clients"],
   ["/admin/projects", "Projects"],
+  ["/admin/invoices", "Invoices"],
   ["/admin", "Dashboard"],
 ];
 
