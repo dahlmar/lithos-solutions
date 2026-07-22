@@ -55,7 +55,7 @@ export default async function PortalLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-surface text-foreground">
+    <div className="flex h-screen flex-col overflow-hidden bg-surface text-foreground lg:flex-row">
       <Sidebar
         items={NAV_ITEMS}
         userName={client.name}
@@ -68,7 +68,7 @@ export default async function PortalLayout({
           label={client.name}
           userInitials={initials(client.name)}
         />
-        <div className="flex-1 overflow-y-auto px-8 pb-16 pt-[34px]">
+        <div className="flex-1 overflow-y-auto px-4 pb-16 pt-6 md:px-8 md:pt-[34px]">
           <div className="mx-auto max-w-[1000px] animate-lithos-fade">{children}</div>
         </div>
       </div>

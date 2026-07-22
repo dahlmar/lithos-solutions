@@ -8,13 +8,13 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
       </div>
 
-      <div className="mt-[18px] grid grid-cols-2 gap-[18px]">
+      <div className="mt-[18px] grid grid-cols-1 gap-[18px] md:grid-cols-2">
         <Panel className="p-6">
           <MonoLabel className="mb-4">RECENT DELIVERABLES</MonoLabel>
           <div className="flex flex-col gap-[13px]">

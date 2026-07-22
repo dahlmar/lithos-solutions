@@ -21,7 +21,7 @@ export default async function DeliverablesPage() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-[18px]">
+    <div className="grid grid-cols-1 gap-[18px] md:grid-cols-2">
       {deliverables.map((d) => (
         <Panel key={d.id} className="p-6">
           <div className="flex items-start justify-between gap-3">

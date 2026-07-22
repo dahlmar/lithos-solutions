@@ -54,7 +54,7 @@ export default function ProjectForm({
         </select>
       </label>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="block">
           <span className={labelClasses}>Type</span>
           <select name="type" defaultValue="creative" className={fieldClasses}>
@@ -74,7 +74,7 @@ export default function ProjectForm({
         </label>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="block">
           <span className={labelClasses}>Manager</span>
           <select name="manager_id" defaultValue="" className={fieldClasses}>

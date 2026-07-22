@@ -4,11 +4,11 @@ import ProgressBar from "@/components/ui/ProgressBar";
 import { toneText } from "@/components/ui/tones";
 import { projectStatusTone, type Project } from "../types";
 
-const COLS = "grid grid-cols-[2.2fr_1.3fr_1.2fr_1.4fr_0.9fr] items-center px-6";
+const COLS = "grid min-w-[680px] grid-cols-[2.2fr_1.3fr_1.2fr_1.4fr_0.9fr] items-center px-6";
 
 export default function ProjectTable({ projects }: { projects: Project[] }) {
   return (
-    <Panel className="overflow-hidden">
+    <Panel className="overflow-x-auto">
       <div className={`${COLS} border-b border-white/8 py-3.5 font-mono text-[10px] tracking-[0.18em] text-muted`}>
         <span>PROJECT</span>
         <span>CLIENT</span>

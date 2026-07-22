@@ -32,7 +32,7 @@ export default async function PortalDashboard() {
 
   return (
     <>
-      <div className="grid grid-cols-[1.4fr_1fr] gap-[18px]">
+      <div className="grid grid-cols-1 gap-[18px] md:grid-cols-[1.4fr_1fr]">
         <Panel className="p-7">
           <MonoLabel>CURRENT PROJECT</MonoLabel>
           <div className="mt-3.5 text-[26px] font-medium tracking-[-0.015em]">
@@ -75,7 +75,7 @@ export default async function PortalDashboard() {
         </Panel>
       </div>
 
-      <div className="mt-[18px] grid grid-cols-[1fr_1.4fr] gap-[18px]">
+      <div className="mt-[18px] grid grid-cols-1 gap-[18px] md:grid-cols-[1fr_1.4fr]">
         <Panel className="p-[26px]">
           <MonoLabel>UPCOMING MILESTONE</MonoLabel>
           {nextUp ? (

@@ -3,7 +3,7 @@ import { toneText } from "@/components/ui/tones";
 import { shortDate } from "@/lib/format";
 import { invoiceStatusTone, type Invoice } from "../types";
 
-const COLS = "grid grid-cols-[1.1fr_2fr_0.9fr_0.9fr_1.1fr_0.8fr] items-center px-6";
+const COLS = "grid min-w-[680px] grid-cols-[1.1fr_2fr_0.9fr_0.9fr_1.1fr_0.8fr] items-center px-6";
 
 export default function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
   if (invoices.length === 0) {
@@ -15,7 +15,7 @@ export default function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
   }
 
   return (
-    <Panel className="overflow-hidden">
+    <Panel className="overflow-x-auto">
       <div className={`${COLS} border-b border-white/8 py-3.5 font-mono text-[10px] tracking-[0.18em] text-muted`}>
         <span>INVOICE</span>
         <span>PROJECT</span>

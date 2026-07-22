@@ -81,7 +81,7 @@ export default async function ProjectDetailPage({
         </div>
       </Panel>
 
-      <div className="mt-[18px] grid grid-cols-[1.5fr_1fr] items-start gap-[18px]">
+      <div className="mt-[18px] grid grid-cols-1 items-start gap-[18px] lg:grid-cols-[1.5fr_1fr]">
         <Panel className="p-6">
           <div className="mb-4 text-sm font-medium">Deliverables</div>
           <div className="flex flex-col">

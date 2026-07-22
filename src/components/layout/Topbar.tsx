@@ -15,7 +15,7 @@ export default function Topbar({ titles, label, userInitials }: TopbarProps) {
   const title = titles.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? "";
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/6 bg-surface/70 px-8 backdrop-blur-md">
+    <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/6 bg-surface/70 px-4 backdrop-blur-md md:px-8">
       <div className="flex items-baseline gap-3">
         <span className="text-[17px] font-medium tracking-[-0.01em]">{title}</span>
         {label ? (

@@ -31,7 +31,7 @@ export default async function AdminLayout({
   const user = await requireUser("admin");
 
   return (
-    <div className="flex h-screen overflow-hidden bg-surface text-foreground">
+    <div className="flex h-screen flex-col overflow-hidden bg-surface text-foreground lg:flex-row">
       <Sidebar
         sectionLabel="OPERATIONS"
         items={NAV_ITEMS}
@@ -41,7 +41,7 @@ export default async function AdminLayout({
       />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar titles={TITLES} userInitials={initials(user.name)} />
-        <div className="flex-1 overflow-y-auto px-8 pb-16 pt-[34px]">
+        <div className="flex-1 overflow-y-auto px-4 pb-16 pt-6 md:px-8 md:pt-[34px]">
           <div className="mx-auto max-w-[1080px] animate-lithos-fade">{children}</div>
         </div>
       </div>

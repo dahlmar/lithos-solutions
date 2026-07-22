@@ -3,11 +3,11 @@ import Panel from "@/components/ui/Panel";
 import { toneText } from "@/components/ui/tones";
 import { clientStatusTone, type ClientWithCounts } from "../types";
 
-const COLS = "grid grid-cols-[1.6fr_1fr_2fr_1fr] items-center px-6";
+const COLS = "grid min-w-[560px] grid-cols-[1.6fr_1fr_2fr_1fr] items-center px-6";
 
 export default function ClientTable({ clients }: { clients: ClientWithCounts[] }) {
   return (
-    <Panel className="overflow-hidden">
+    <Panel className="overflow-x-auto">
       <div className={`${COLS} border-b border-white/8 py-3.5 font-mono text-[10px] tracking-[0.18em] text-muted`}>
         <span>CLIENT</span>
         <span>PROJECTS</span>
