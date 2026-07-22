@@ -7,12 +7,14 @@ import { NextResponse, type NextRequest } from "next/server";
 // see a valid token.
 export default async function proxy(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) {
     // Fail loudly with a clear message instead of a cryptic client error —
     // on Vercel this means the env vars are missing in Project Settings.
     throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY. Locally: copy .env.example to .env.local. On Vercel: add them under Project Settings → Environment Variables.",
+      "Missing NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY (or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY). Locally: copy .env.example to .env.local. On Vercel: add them under Project Settings → Environment Variables.",
     );
   }
 
